@@ -1,0 +1,23 @@
+<div style="position: absolute; top: 10px; right: 10px;">
+    {% if user.is_authenticated %}
+        <span>Привет, {{ user.username }}!</span>
+        <a href="{% url 'polls:profile' %}">👤 Профиль</a>
+        <a href="{% url 'polls:logout' %}">🚪 Выйти</a>
+    {% else %}
+        <a href="{% url 'polls:login' %}">🔑 Войти</a>
+        <a href="{% url 'polls:register' %}">📝 Регистрация</a>
+    {% endif %}
+</div>
+
+{% if latest_question_list %}
+<ul>
+    {% for question in latest_question_list %}
+    <li><a href="{% url 'polls:detail' question.id %}">{{question.question_text}}</a> </li>
+    {% endfor %}
+</ul>
+    {% else %}
+     <p>
+         Нет вопросов!
+     </p>
+
+{% endif %}
