@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация</title>
-        <style>
-        .error { color: red; }
-        .form-group { margin: 10px 0; }
-        label { display: block; margin-bottom: 5px; }
-        input { padding: 5px; width: 200px; }
-    </style>
-</head>
-<body>
-    <h2>Регистрация</h2>
+{% extends 'polls/base.html' %}
+{% block title %} Регистрация {% endblock %}
+{% block content %}
 
     {% if error %}
         <div class="error">{{ error }}</div>
@@ -47,5 +36,4 @@
         <button type="submit">Зарегистрироваться</button>
     </form>
     <p><a href="{% url 'polls:login' %}">Уже есть аккаунт? Войдите</a></p>
-</body>
-</html>
+{% endblock %}

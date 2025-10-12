@@ -105,7 +105,42 @@ def logout_view(request):
 def profile_view(request):
     if request.method == "GET":
         return render(request, 'polls/profile.html')
-    if request.method == "POST" and 'delete_account' in request.POST:
-        request.user.delete()
-        logout(request)
-        return redirect('polls:index')
+    if request.method == "POST":
+        if 'delete_account' in request.POST:
+            request.user.delete()
+            logout(request)
+            return redirect('polls:index')
+        elif 'edit_account' in request.POST:
+            return redirect('polls:edit_profile')
+
+@login_required
+def edit_profile_view(request):
+    if request.method == 'POST':
+        user = request.user
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        avatar = request.FILES.get('avatar')
+
+        if username and username != user.username:
+            if AdvUser.objects.filter(username=username).exclude(pk=user.pk).exists():
+                return render(request, 'polls/edit_profile.html', {
+                    'error': 'Пользователь с таким именем уже существует'
+                })
+            user.username = username
+
+        if email and email != user.email:
+            if AdvUser.objects.filter(email=email).exclude(pk=user.pk).exists():
+                return render(request, 'polls/edit_profile.html', {
+                    'error': 'Пользователь с таким email уже существует'
+                })
+            user.email = email
+
+        if avatar:
+            if user.avatar:
+                user.avatar.delete(save=False)
+            user.avatar = avatar
+
+        user.save()
+        return redirect('polls:profile')
+
+    return render(request, 'polls/edit_profile.html')
