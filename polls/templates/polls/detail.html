@@ -6,14 +6,17 @@
     <fieldset>
         <legend>
             <h1>{{question.question_text}}</h1>
-            <h4>Описание: {{ question.question_description }}</h4>
+            {% if question.question_image %}
+            {% endif %}
         </legend>
+        <p style="font-size: 20px">Описание: {{ question.question_description }}</p>
+        <img src="{{ question.question_image.url }}" alt="Изображение поста" style="height: 100px; width: 500px"><br>
         {% if error_message %}<p><strong> {{error_message}}</strong></p>{% endif %}
         {% for choice in question.choice_set.all %}
         <input type="radio" name="choice" id="choice{{forloop.counter}}" value="{{choice.id}}">
         <label for="choice{{forloop.counter}}">{{choice.choice_text}}</label><br>
         {% endfor %}
     </fieldset>
-<input type="submit" value="Vote">
+<input type="submit" value="Vote" style="background-color: #f5f5dc; border-color: burlywood; width: 100px; height: 40px; font-size: 20px; margin-top: 5px">
 </form>
 {% endblock %}

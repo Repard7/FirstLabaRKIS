@@ -2,12 +2,17 @@
 {% block title %} Главная {% endblock %}
 {% block content %}
     {% if latest_question_list %}
-    <ul>
+    <ul style="list-style-type: none">
         {% for question in latest_question_list %}
             {% if not question.is_expired %}
-                <li>
-                    <a href="{% url 'polls:detail' question.id %}">{{question.question_text}}</a>
-                    <p>{{ question.question_description|slice:'30'}}...</p>
+                <li style="border-width: 1px; border-color: black; border-style: solid; margin-bottom: 20px">
+                    <a style="color: black; text-decoration: none; font-size: 30px;" href="{% url 'polls:detail' question.id %}">{{question.question_text}}</a>
+                    {% if question.question_description %}
+                        <p>{{ question.question_description|slice:'30'}}...</p>
+                    {% endif %}
+                    {% if question.question_image %}
+                        <img src="{{ question.question_image.url }}" alt="Изображение поста" style="height: 80px; width: 250px" >
+                    {% endif %}
                 </li>
             {% endif %} 
         {% endfor %}

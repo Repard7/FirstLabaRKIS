@@ -10,7 +10,8 @@ from django.utils.timezone import now
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
-    question_description = models.TextField(blank=True, )
+    question_description = models.TextField(blank=True)
+    question_image = models.ImageField(upload_to='question_images/', blank=True, null=True, verbose_name='Изображение опроса')
 
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
