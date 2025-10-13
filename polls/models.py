@@ -39,7 +39,7 @@ class Choice(models.Model):
         return (self.votes / total) * 100
 
 class AdvUser(AbstractUser):
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name='Аватар')
+    avatar = models.ImageField(upload_to='avatars/', blank=False, null=False, verbose_name='Аватар')
     email = models.EmailField(unique=True, verbose_name='Email адрес')
 
     class Meta:
