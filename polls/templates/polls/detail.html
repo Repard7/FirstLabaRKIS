@@ -10,13 +10,21 @@
             {% endif %}
         </legend>
         <p style="font-size: 20px">Описание: {{ question.question_description }}</p>
-        <img src="{{ question.question_image.url }}" alt="Изображение поста" style="height: 100px; width: 500px"><br>
+        {% if question.question_image %}
+            <img src="{{ question.question_image.url }}" alt="Изображение поста" style="height: 100px; width: 500px"><br>
+        {% endif %}
         {% if error_message %}<p><strong> {{error_message}}</strong></p>{% endif %}
         {% for choice in question.choice_set.all %}
         <input type="radio" name="choice" id="choice{{forloop.counter}}" value="{{choice.id}}">
         <label for="choice{{forloop.counter}}">{{choice.choice_text}}</label><br>
         {% endfor %}
     </fieldset>
-<input type="submit" value="Vote" style="background-color: #f5f5dc; border-color: burlywood; width: 100px; height: 40px; font-size: 20px; margin-top: 5px">
+    {% if not has_voted %}
+    <input type="submit" value="Vote" style="background-color: #f5f5dc; border-color: burlywood; width: 100px; height: 40px; font-size: 20px; margin-top: 5px">
+    {% endif %}
+    
+    {% if has_voted%}
+    <a href="{% url 'polls:results' question.id %}">Перейти к результатам</a>
+    {% endif %}
 </form>
 {% endblock %}

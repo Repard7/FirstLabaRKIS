@@ -1,0 +1,50 @@
+{% extends 'polls/base.html' %}
+{% block title %} Создание поста {% endblock %}
+{% block content %}
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+    
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="username">Описание поста:</label>
+            <input type="text" id="question_description" name="question_description" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Заголовок поста:</label>
+            <input type="text" id="question_text" name="question_text" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="avatar">Изображение поста:</label>
+            <input type="file" id="question_image" name="question_image" accept="image/*" required>
+        </div>
+        
+        <h3>Варианты ответов:</h3>
+        <div class="form-group">
+            <label for="choice1">Вариант 1:</label>
+            <input type="text" id="choice1" name="choices" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="choice2">Вариант 2:</label>
+            <input type="text" id="choice2" name="choices" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="choice3">Вариант 3:</label>
+            <input type="text" id="choice3" name="choices">
+        </div>
+        
+        <div class="form-group">
+            <label for="choice4">Вариант 4:</label>
+            <input type="text" id="choice4" name="choices">
+        </div>
+        <button type="submit">Создать пост</button>
+    </form>
+{% endblock %}

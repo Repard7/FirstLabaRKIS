@@ -25,6 +25,12 @@ class Question(models.Model):
     def is_expired(self):
         return timezone.now() > self.pub_date + datetime.timedelta(minutes=10)
 
+    @classmethod
+    def create_question(cls, question_text, question_description=""):
+        return cls.objects.create(
+            question_text=question_text,
+            question_description=question_description
+        )
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)

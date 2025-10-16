@@ -1,3 +1,6 @@
+
+from datetime import datetime
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
@@ -20,6 +23,17 @@ class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        question = self.object
+
+        if self.request.user.is_authenticated:
+            has_voted = UserVote.objects.filter(
+                user=self.request.user,
+                question=question
+            ).exists()
+            context['has_voted'] = has_voted
+        return context
 
 class ResultsView(generic.DetailView):
     model = Question
@@ -28,22 +42,26 @@ class ResultsView(generic.DetailView):
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+    has_voted = UserVote.objects.filter(user=request.user, question=question).exists()
+
     if not request.user.is_authenticated:
         return render(request, 'polls/detail.html', {
             'question' : question,
             'error_message' : 'Вы должны зарегистрироваться для голосований'
         })
-    if UserVote.objects.filter(user = request.user, question=question).exists():
+    if has_voted:
         return render(request, 'polls/detail.html', {
             'question': question,
-            'error_message': 'Вы уже голосовали в этом опросе'
+            'error_message': 'Вы уже голосовали в этом опросе',
+            'has_voted': True
         })
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         return render(request, 'polls/detail.html', {
             'question': question,
-            'error_message': 'вы не сделали выбор'
+            'error_message': 'вы не сделали выбор',
+            'has_voted' : has_voted
         })
     else:
         selected_choice.votes += 1
@@ -144,3 +162,32 @@ def edit_profile_view(request):
         return redirect('polls:profile')
 
     return render(request, 'polls/edit_profile.html')
+
+def create_View(request):
+    if request.method == 'POST':
+        question_text = request.POST.get('question_text')
+        question_description = request.POST.get('question_description')
+        question_image = request.FILES.get('question_image')
+        choices = request.POST.getlist('choices')
+
+        if Question.objects.filter(question_text=question_text).exists():
+            return render(request, 'polls/register.html', {'error' : 'Пост с таким именем уже существует'})
+
+        question = Question.objects.create(
+            question_text=question_text,
+            question_description=question_description,
+            pub_date=datetime.now()
+        )
+        if question_image:
+            question.question_image = question_image
+            question.save()
+        valid_choices = [choice.strip() for choice in choices if choice.strip()]
+        for choice_text in valid_choices:
+            Choice.objects.create(
+                question=question,
+                choice_text=choice_text,
+                votes=0
+            )
+        return redirect('polls:index')
+    return render(request, 'polls/create.html')
+
